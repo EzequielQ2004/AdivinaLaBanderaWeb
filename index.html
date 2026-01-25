@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adivina la Bandera</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Menú Principal -->
+        <div id="menu-screen" class="screen active">
+            <header>
+                <h1><i class="fas fa-flag"></i> Adivina la Bandera</h1>
+                <p class="subtitle">¿Cuántas banderas puedes reconocer?</p>
+            </header>
+            
+            <div class="menu-content">
+                <div class="game-info">
+                    <div class="info-box">
+                        <i class="fas fa-gamepad"></i>
+                        <h3>Modo de Juego</h3>
+                        <p>Selecciona el nombre correcto entre 4 opciones</p>
+                    </div>
+                    <div class="info-box">
+                        <i class="fas fa-globe-americas"></i>
+                        <h3>Variedad</h3>
+                        <p>Banderas de más de 50 países diferentes</p>
+                    </div>
+                    <div class="info-box">
+                        <i class="fas fa-chart-line"></i>
+                        <h3>Puntuación</h3>
+                        <p>Gana puntos por cada respuesta correcta</p>
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <button id="start-btn" class="btn btn-primary">
+                        <i class="fas fa-play"></i> Iniciar Juego
+                    </button>
+                    <button id="instructions-btn" class="btn btn-secondary">
+                        <i class="fas fa-info-circle"></i> Instrucciones
+                    </button>
+                </div>
+                
+                <div class="difficulty-selector">
+                    <h3>Selecciona Dificultad:</h3>
+                    <div class="difficulty-options">
+                        <button class="difficulty-btn active" data-level="easy">Fácil</button>
+                        <button class="difficulty-btn" data-level="medium">Medio</button>
+                        <button class="difficulty-btn" data-level="hard">Difícil</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Pantalla de Instrucciones -->
+        <div id="instructions-screen" class="screen">
+            <div class="instructions-header">
+                <h2><i class="fas fa-book"></i> Instrucciones del Juego</h2>
+                <button id="back-menu-btn" class="btn-back">
+                    <i class="fas fa-arrow-left"></i> Volver al Menú
+                </button>
+            </div>
+            
+            <div class="instructions-content">
+                <div class="instruction-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Comienza el juego</h3>
+                        <p>Haz clic en "Iniciar Juego" desde el menú principal.</p>
+                    </div>
+                </div>
+                <div class="instruction-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Adivina la bandera</h3>
+                        <p>Se te mostrará una bandera y cuatro opciones con nombres de países.</p>
+                    </div>
+                </div>
+                <div class="instruction-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Selecciona la respuesta correcta</h3>
+                        <p>Haz clic en el nombre del país que corresponde a la bandera mostrada.</p>
+                    </div>
+                </div>
+                <div class="instruction-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Continúa jugando</h3>
+                        <p>Cada respuesta correcta te da puntos. El juego continúa hasta que cometas un error.</p>
+                    </div>
+                </div>
+                <div class="instruction-step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h3>Cambia la dificultad</h3>
+                        <p>Puedes seleccionar entre fácil, medio y difícil para ajustar el desafío.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Pantalla de Juego -->
+        <div id="game-screen" class="screen">
+            <div class="game-header">
+                <div class="game-stats">
+                    <div class="stat">
+                        <span class="stat-label">Puntos</span>
+                        <span id="score" class="stat-value">0</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Ronda</span>
+                        <span id="round" class="stat-value">1</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Vidas</span>
+                        <span id="lives" class="stat-value">3</span>
+                    </div>
+                </div>
+                
+                <button id="end-game-btn" class="btn-end">
+                    <i class="fas fa-times"></i> <span class="btn-text">Salir</span>
+                </button>
+            </div>
+            
+            <div class="game-content">
+                <div class="flag-container">
+                    <div id="flag-image" class="flag-image"></div>
+                    <div class="flag-shadow"></div>
+                </div>
+                
+                <div class="question">
+                    <h2>¿A qué país pertenece esta bandera?</h2>
+                </div>
+                
+                <div class="options-container">
+                    <div class="options-row">
+                        <button class="option-btn" data-index="0">Opción 1</button>
+                        <button class="option-btn" data-index="1">Opción 2</button>
+                    </div>
+                    <div class="options-row">
+                        <button class="option-btn" data-index="2">Opción 3</button>
+                        <button class="option-btn" data-index="3">Opción 4</button>
+                    </div>
+                </div>
+                
+                <div class="feedback" id="feedback"></div>
+            </div>
+        </div>
+        
+        <!-- Pantalla de Resultados -->
+        <div id="results-screen" class="screen">
+            <div class="results-content">
+                <h2><i class="fas fa-trophy"></i> Juego Terminado</h2>
+                
+                <div class="results-stats">
+                    <div class="result-stat">
+                        <div class="result-icon correct">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="result-info">
+                            <span class="result-label">Respuestas Correctas</span>
+                            <span id="correct-answers" class="result-value">0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="result-stat">
+                        <div class="result-icon score">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="result-info">
+                            <span class="result-label">Puntuación Final</span>
+                            <span id="final-score" class="result-value">0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="result-stat">
+                        <div class="result-icon round">
+                            <i class="fas fa-flag"></i>
+                        </div>
+                        <div class="result-info">
+                            <span class="result-label">Rondas Jugadas</span>
+                            <span id="total-rounds" class="result-value">0</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="results-actions">
+                    <button id="play-again-btn" class="btn btn-primary">
+                        <i class="fas fa-redo"></i> Jugar Otra Vez
+                    </button>
+                    <button id="back-to-menu-btn" class="btn btn-secondary">
+                        <i class="fas fa-home"></i> Volver al Menú
+                    </button>
+                </div>
+                
+                <div class="share-game">
+                    <p>¡Comparte este juego con tus amigos!</p>
+                    <div class="social-icons">
+                        <button class="social-btn">
+                            <i class="fab fa-twitter"></i>
+                        </button>
+                        <button class="social-btn">
+                            <i class="fab fa-facebook"></i>
+                        </button>
+                        <button class="social-btn">
+                            <i class="fab fa-whatsapp"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Juego educativo creado con HTML, CSS y JavaScript puro</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

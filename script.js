@@ -1,0 +1,444 @@
+// Base de datos de banderas y países con URLs de imágenes
+const countries = [
+    { name: "Argentina", code: "AR", flag: "https://flagcdn.com/w320/ar.png" },
+    { name: "Brasil", code: "BR", flag: "https://flagcdn.com/w320/br.png" },
+    { name: "Canadá", code: "CA", flag: "https://flagcdn.com/w320/ca.png" },
+    { name: "Chile", code: "CL", flag: "https://flagcdn.com/w320/cl.png" },
+    { name: "Colombia", code: "CO", flag: "https://flagcdn.com/w320/co.png" },
+    { name: "España", code: "ES", flag: "https://flagcdn.com/w320/es.png" },
+    { name: "Estados Unidos", code: "US", flag: "https://flagcdn.com/w320/us.png" },
+    { name: "Francia", code: "FR", flag: "https://flagcdn.com/w320/fr.png" },
+    { name: "Alemania", code: "DE", flag: "https://flagcdn.com/w320/de.png" },
+    { name: "Italia", code: "IT", flag: "https://flagcdn.com/w320/it.png" },
+    { name: "Japón", code: "JP", flag: "https://flagcdn.com/w320/jp.png" },
+    { name: "México", code: "MX", flag: "https://flagcdn.com/w320/mx.png" },
+    { name: "Perú", code: "PE", flag: "https://flagcdn.com/w320/pe.png" },
+    { name: "Reino Unido", code: "GB", flag: "https://flagcdn.com/w320/gb.png" },
+    { name: "Rusia", code: "RU", flag: "https://flagcdn.com/w320/ru.png" },
+    { name: "China", code: "CN", flag: "https://flagcdn.com/w320/cn.png" },
+    { name: "India", code: "IN", flag: "https://flagcdn.com/w320/in.png" },
+    { name: "Australia", code: "AU", flag: "https://flagcdn.com/w320/au.png" },
+    { name: "Sudáfrica", code: "ZA", flag: "https://flagcdn.com/w320/za.png" },
+    { name: "Egipto", code: "EG", flag: "https://flagcdn.com/w320/eg.png" },
+    { name: "Corea del Sur", code: "KR", flag: "https://flagcdn.com/w320/kr.png" },
+    { name: "Portugal", code: "PT", flag: "https://flagcdn.com/w320/pt.png" },
+    { name: "Grecia", code: "GR", flag: "https://flagcdn.com/w320/gr.png" },
+    { name: "Turquía", code: "TR", flag: "https://flagcdn.com/w320/tr.png" },
+    { name: "Suecia", code: "SE", flag: "https://flagcdn.com/w320/se.png" },
+    { name: "Noruega", code: "NO", flag: "https://flagcdn.com/w320/no.png" },
+    { name: "Finlandia", code: "FI", flag: "https://flagcdn.com/w320/fi.png" },
+    { name: "Dinamarca", code: "DK", flag: "https://flagcdn.com/w320/dk.png" },
+    { name: "Holanda", code: "NL", flag: "https://flagcdn.com/w320/nl.png" },
+    { name: "Bélgica", code: "BE", flag: "https://flagcdn.com/w320/be.png" },
+    { name: "Suiza", code: "CH", flag: "https://flagcdn.com/w320/ch.png" },
+    { name: "Austria", code: "AT", flag: "https://flagcdn.com/w320/at.png" },
+    { name: "Polonia", code: "PL", flag: "https://flagcdn.com/w320/pl.png" },
+    { name: "Ucrania", code: "UA", flag: "https://flagcdn.com/w320/ua.png" },
+    { name: "Israel", code: "IL", flag: "https://flagcdn.com/w320/il.png" },
+    { name: "Arabia Saudita", code: "SA", flag: "https://flagcdn.com/w320/sa.png" },
+    { name: "Emiratos Árabes Unidos", code: "AE", flag: "https://flagcdn.com/w320/ae.png" },
+    { name: "Cuba", code: "CU", flag: "https://flagcdn.com/w320/cu.png" },
+    { name: "Venezuela", code: "VE", flag: "https://flagcdn.com/w320/ve.png" },
+    { name: "Uruguay", code: "UY", flag: "https://flagcdn.com/w320/uy.png" },
+    { name: "Paraguay", code: "PY", flag: "https://flagcdn.com/w320/py.png" },
+    { name: "Bolivia", code: "BO", flag: "https://flagcdn.com/w320/bo.png" },
+    { name: "Ecuador", code: "EC", flag: "https://flagcdn.com/w320/ec.png" },
+    { name: "Costa Rica", code: "CR", flag: "https://flagcdn.com/w320/cr.png" },
+    { name: "Panamá", code: "PA", flag: "https://flagcdn.com/w320/pa.png" },
+    { name: "República Dominicana", code: "DO", flag: "https://flagcdn.com/w320/do.png" },
+    { name: "Puerto Rico", code: "PR", flag: "https://flagcdn.com/w320/pr.png" },
+    { name: "Jamaica", code: "JM", flag: "https://flagcdn.com/w320/jm.png" },
+    { name: "Haití", code: "HT", flag: "https://flagcdn.com/w320/ht.png" },
+    { name: "Filipinas", code: "PH", flag: "https://flagcdn.com/w320/ph.png" },
+    { name: "Vietnam", code: "VN", flag: "https://flagcdn.com/w320/vn.png" },
+    { name: "Tailandia", code: "TH", flag: "https://flagcdn.com/w320/th.png" },
+    { name: "Indonesia", code: "ID", flag: "https://flagcdn.com/w320/id.png" },
+    { name: "Malasia", code: "MY", flag: "https://flagcdn.com/w320/my.png" },
+    { name: "Singapur", code: "SG", flag: "https://flagcdn.com/w320/sg.png" },
+    { name: "Nueva Zelanda", code: "NZ", flag: "https://flagcdn.com/w320/nz.png" },
+    { name: "Irlanda", code: "IE", flag: "https://flagcdn.com/w320/ie.png" },
+    { name: "Islandia", code: "IS", flag: "https://flagcdn.com/w320/is.png" }
+];
+
+// Variables del juego
+let currentGame = {
+    score: 0,
+    round: 1,
+    lives: 3,
+    difficulty: "easy",
+    correctAnswers: 0,
+    currentCountry: null,
+    options: [],
+    gameActive: false,
+    usedCountries: [] // Para evitar repeticiones
+};
+
+// Elementos del DOM
+const menuScreen = document.getElementById("menu-screen");
+const instructionsScreen = document.getElementById("instructions-screen");
+const gameScreen = document.getElementById("game-screen");
+const resultsScreen = document.getElementById("results-screen");
+const startBtn = document.getElementById("start-btn");
+const instructionsBtn = document.getElementById("instructions-btn");
+const backMenuBtn = document.getElementById("back-menu-btn");
+const endGameBtn = document.getElementById("end-game-btn");
+const playAgainBtn = document.getElementById("play-again-btn");
+const backToMenuBtn = document.getElementById("back-to-menu-btn");
+const scoreElement = document.getElementById("score");
+const roundElement = document.getElementById("round");
+const livesElement = document.getElementById("lives");
+const flagImage = document.getElementById("flag-image");
+const optionButtons = document.querySelectorAll(".option-btn");
+const feedbackElement = document.getElementById("feedback");
+const correctAnswersElement = document.getElementById("correct-answers");
+const finalScoreElement = document.getElementById("final-score");
+const totalRoundsElement = document.getElementById("total-rounds");
+const difficultyButtons = document.querySelectorAll(".difficulty-btn");
+
+// Inicialización del juego
+function initGame() {
+    // Configurar listeners de los botones
+    startBtn.addEventListener("click", startGame);
+    instructionsBtn.addEventListener("click", showInstructions);
+    backMenuBtn.addEventListener("click", showMenu);
+    endGameBtn.addEventListener("click", endGame);
+    playAgainBtn.addEventListener("click", restartGame);
+    backToMenuBtn.addEventListener("click", showMenu);
+    
+    // Configurar botones de dificultad
+    difficultyButtons.forEach(button => {
+        button.addEventListener("click", function() {
+            difficultyButtons.forEach(btn => btn.classList.remove("active"));
+            this.classList.add("active");
+            currentGame.difficulty = this.dataset.level;
+        });
+    });
+    
+    // Configurar botones de opciones
+    optionButtons.forEach(button => {
+        button.addEventListener("click", function() {
+            if (!currentGame.gameActive) return;
+            
+            const selectedIndex = parseInt(this.dataset.index);
+            checkAnswer(selectedIndex);
+        });
+    });
+    
+    // Pre-cargar algunas imágenes para mejor experiencia
+    preloadFlags();
+    
+    // Inicializar con la pantalla del menú visible
+    showMenu();
+}
+
+// Pre-cargar imágenes de banderas
+function preloadFlags() {
+    console.log("Pre-cargando imágenes de banderas...");
+    // Pre-cargamos las primeras 10 banderas para una experiencia más fluida
+    for (let i = 0; i < Math.min(10, countries.length); i++) {
+        const img = new Image();
+        img.src = countries[i].flag;
+    }
+}
+
+// Mostrar menú principal
+function showMenu() {
+    menuScreen.classList.add("active");
+    instructionsScreen.classList.remove("active");
+    gameScreen.classList.remove("active");
+    resultsScreen.classList.remove("active");
+}
+
+// Mostrar instrucciones
+function showInstructions() {
+    menuScreen.classList.remove("active");
+    instructionsScreen.classList.add("active");
+    gameScreen.classList.remove("active");
+    resultsScreen.classList.remove("active");
+}
+
+// Iniciar juego
+function startGame() {
+    // Reiniciar estadísticas
+    currentGame.score = 0;
+    currentGame.round = 1;
+    currentGame.lives = 3;
+    currentGame.correctAnswers = 0;
+    currentGame.gameActive = true;
+    currentGame.usedCountries = [];
+    
+    // Actualizar UI
+    scoreElement.textContent = currentGame.score;
+    roundElement.textContent = currentGame.round;
+    livesElement.textContent = currentGame.lives;
+    
+    // Cambiar a pantalla de juego
+    menuScreen.classList.remove("active");
+    instructionsScreen.classList.remove("active");
+    gameScreen.classList.add("active");
+    resultsScreen.classList.remove("active");
+    
+    // Generar primera pregunta
+    generateQuestion();
+}
+
+// Generar una nueva pregunta
+function generateQuestion() {
+    // Limpiar feedback
+    feedbackElement.textContent = "";
+    feedbackElement.className = "feedback";
+    
+    // Mostrar mensaje de carga
+    flagImage.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Cargando bandera...</div>';
+    
+    // Seleccionar un país aleatorio que no se haya usado recientemente
+    let availableCountries = countries.filter(country => 
+        !currentGame.usedCountries.includes(country.code)
+    );
+    
+    // Si ya usamos muchas banderas, reiniciamos la lista
+    if (availableCountries.length < 4) {
+        currentGame.usedCountries = [];
+        availableCountries = countries;
+    }
+    
+    const correctIndex = Math.floor(Math.random() * availableCountries.length);
+    currentGame.currentCountry = availableCountries[correctIndex];
+    
+    // Agregar a la lista de usados
+    currentGame.usedCountries.push(currentGame.currentCountry.code);
+    
+    // Crear imagen de la bandera
+    const img = new Image();
+    img.src = currentGame.currentCountry.flag;
+    img.alt = `Bandera de ${currentGame.currentCountry.name}`;
+    img.classList.add("flag-img");
+    
+    img.onload = function() {
+        flagImage.innerHTML = '';
+        flagImage.appendChild(img);
+    };
+    
+    img.onerror = function() {
+        // Si falla la carga, mostrar un emoji como fallback
+        flagImage.innerHTML = `<div class="flag-emoji">${getFlagEmoji(currentGame.currentCountry.code)}</div>`;
+    };
+    
+    // Crear opciones (1 correcta y 3 incorrectas)
+    currentGame.options = [currentGame.currentCountry.name];
+    
+    // Añadir opciones incorrectas (evitar duplicados)
+    while (currentGame.options.length < 4) {
+        const randomIndex = Math.floor(Math.random() * countries.length);
+        const randomCountry = countries[randomIndex].name;
+        
+        if (!currentGame.options.includes(randomCountry)) {
+            currentGame.options.push(randomCountry);
+        }
+    }
+    
+    // Mezclar las opciones para que la correcta no siempre esté en la misma posición
+    shuffleArray(currentGame.options);
+    
+    // Actualizar los botones con las opciones
+    optionButtons.forEach((button, index) => {
+        button.textContent = currentGame.options[index];
+        button.classList.remove("correct", "incorrect");
+        button.disabled = false;
+    });
+}
+
+// Función para obtener emoji de bandera como fallback
+function getFlagEmoji(countryCode) {
+    // Convierte código de país a emoji regional indicator
+    const codePoints = countryCode
+        .toUpperCase()
+        .split('')
+        .map(char => 127397 + char.charCodeAt());
+    return String.fromCodePoint(...codePoints);
+}
+
+// Mezclar array (algoritmo Fisher-Yates)
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+// Verificar respuesta
+function checkAnswer(selectedIndex) {
+    if (!currentGame.gameActive) return;
+    
+    const selectedCountry = currentGame.options[selectedIndex];
+    const isCorrect = selectedCountry === currentGame.currentCountry.name;
+    
+    // Deshabilitar todos los botones
+    optionButtons.forEach(button => {
+        button.disabled = true;
+    });
+    
+    // Resaltar la respuesta correcta y la seleccionada
+    optionButtons.forEach((button, index) => {
+        if (currentGame.options[index] === currentGame.currentCountry.name) {
+            button.classList.add("correct");
+        } else if (index === selectedIndex && !isCorrect) {
+            button.classList.add("incorrect");
+        }
+    });
+    
+    // Procesar resultado
+    if (isCorrect) {
+        // Respuesta correcta
+        currentGame.correctAnswers++;
+        
+        // Calcular puntuación según dificultad
+        let points = 0;
+        switch (currentGame.difficulty) {
+            case "easy": points = 10; break;
+            case "medium": points = 20; break;
+            case "hard": points = 30; break;
+        }
+        
+        currentGame.score += points;
+        
+        // Mostrar feedback
+        feedbackElement.textContent = `¡Correcto! +${points} puntos`;
+        feedbackElement.classList.add("correct");
+        
+        // Actualizar UI
+        scoreElement.textContent = currentGame.score;
+        
+        // Avanzar a la siguiente ronda después de un breve retraso
+        setTimeout(() => {
+            currentGame.round++;
+            roundElement.textContent = currentGame.round;
+            generateQuestion();
+        }, 1500);
+    } else {
+        // Respuesta incorrecta
+        currentGame.lives--;
+        livesElement.textContent = currentGame.lives;
+        
+        // Mostrar feedback
+        feedbackElement.textContent = `Incorrecto. La respuesta correcta era ${currentGame.currentCountry.name}`;
+        feedbackElement.classList.add("incorrect");
+        
+        // Verificar si el juego ha terminado
+        if (currentGame.lives <= 0) {
+            // Juego terminado
+            setTimeout(() => {
+                endGame();
+            }, 2000);
+        } else {
+            // Continuar con siguiente ronda
+            setTimeout(() => {
+                currentGame.round++;
+                roundElement.textContent = currentGame.round;
+                generateQuestion();
+            }, 2000);
+        }
+    }
+}
+
+// Terminar juego
+function endGame() {
+    currentGame.gameActive = false;
+    
+    // Actualizar estadísticas en pantalla de resultados
+    correctAnswersElement.textContent = currentGame.correctAnswers;
+    finalScoreElement.textContent = currentGame.score;
+    totalRoundsElement.textContent = currentGame.round - 1;
+    
+    // Cambiar a pantalla de resultados
+    menuScreen.classList.remove("active");
+    instructionsScreen.classList.remove("active");
+    gameScreen.classList.remove("active");
+    resultsScreen.classList.add("active");
+}
+
+// Reiniciar juego
+function restartGame() {
+    // Reiniciar estadísticas
+    currentGame.score = 0;
+    currentGame.round = 1;
+    currentGame.lives = 3;
+    currentGame.correctAnswers = 0;
+    currentGame.gameActive = true;
+    currentGame.usedCountries = [];
+    
+    // Actualizar UI
+    scoreElement.textContent = currentGame.score;
+    roundElement.textContent = currentGame.round;
+    livesElement.textContent = currentGame.lives;
+    
+    // Cambiar a pantalla de juego
+    menuScreen.classList.remove("active");
+    instructionsScreen.classList.remove("active");
+    gameScreen.classList.add("active");
+    resultsScreen.classList.remove("active");
+    
+    // Generar primera pregunta
+    generateQuestion();
+}
+
+// Botones de compartir en redes sociales (funcionalidad básica)
+document.querySelectorAll(".social-btn").forEach(button => {
+    button.addEventListener("click", function() {
+        const platform = this.querySelector("i").className;
+        let url = "";
+        let text = `¡Acabo de obtener ${currentGame.score} puntos en el juego de Adivina la Bandera! ¿Puedes superarme?`;
+        
+        if (platform.includes("twitter")) {
+            url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(window.location.href)}`;
+        } else if (platform.includes("facebook")) {
+            url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${encodeURIComponent(text)}`;
+        } else if (platform.includes("whatsapp")) {
+            url = `https://wa.me/?text=${encodeURIComponent(text + " " + window.location.href)}`;
+        }
+        
+        if (url) {
+            window.open(url, "_blank", "width=600,height=400");
+        }
+    });
+});
+
+// Inicializar el juego cuando se carga la página
+document.addEventListener("DOMContentLoaded", initGame);
+
+// Detectar dispositivo móvil y ajustar comportamiento
+function detectMobileDevice() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+// Optimizar para dispositivos táctiles
+function optimizeForTouch() {
+    if (detectMobileDevice()) {
+        console.log("Dispositivo móvil detectado - optimizando interfaz...");
+        
+        // Aumentar el tamaño de los botones para mejor toque
+        document.querySelectorAll('.option-btn, .btn').forEach(button => {
+            button.style.minHeight = '50px';
+        });
+        
+        // Deshabilitar hover effects en móviles
+        document.body.classList.add('mobile-device');
+        
+        // Ajustar el tamaño de fuente si es muy pequeño
+        if (window.innerWidth <= 360) {
+            document.documentElement.style.fontSize = '14px';
+        }
+    }
+}
+
+// Llamar a la función de optimización al cargar
+document.addEventListener('DOMContentLoaded', function() {
+    initGame();
+    optimizeForTouch();
+    
+    // También optimizar al cambiar tamaño de ventana
+    window.addEventListener('resize', optimizeForTouch);
+});
+
+// Añadir esta clase CSS para deshabilitar hover en móviles
