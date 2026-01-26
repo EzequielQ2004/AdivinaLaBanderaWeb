@@ -179,6 +179,8 @@ function startGame() {
     scoreElement.textContent = currentGame.score;
     roundElement.textContent = currentGame.round;
     livesElement.textContent = currentGame.lives;
+
+    console.log(`Iniciando juego - Ronda: ${currentGame.round}, Vidas: ${currentGame.lives}`);
     
     // Cambiar a pantalla de juego
     menuScreen.classList.remove("active");
@@ -339,75 +341,132 @@ function shuffleArray(array) {
 
 // Verificar respuesta
 function checkAnswer(selectedIndex) {
-    if (!currentGame.gameActive) return;
+    console.log(`=== CHECK ANSWER INVOCADA === Ronda actual: ${currentGame.round}`);
+    
+    // BLOQUEAR múltiples ejecuciones
+    if (window.answerBeingProcessed) {
+        console.log("Ya se está procesando una respuesta, ignorando...");
+        return;
+    }
+    
+    window.answerBeingProcessed = true;
+    
+    // Validaciones básicas
+    if (!currentGame.gameActive || !currentGame.currentCountry || !currentGame.options) {
+        console.error("Estado inválido para procesar respuesta");
+        window.answerBeingProcessed = false;
+        return;
+    }
     
     const selectedCountry = currentGame.options[selectedIndex];
     const isCorrect = selectedCountry === currentGame.currentCountry.name;
     
-    // Deshabilitar todos los botones
+    console.log(`Seleccionado: "${selectedCountry}", Correcto: "${currentGame.currentCountry.name}"`);
+    console.log(`¿Es correcto? ${isCorrect}`);
+    
+    // Deshabilitar botones visualmente
     optionButtons.forEach(button => {
         button.disabled = true;
-    });
-    
-    // Resaltar la respuesta correcta y la seleccionada
-    optionButtons.forEach((button, index) => {
-        if (currentGame.options[index] === currentGame.currentCountry.name) {
+        if (button.textContent === currentGame.currentCountry.name) {
             button.classList.add("correct");
-        } else if (index === selectedIndex && !isCorrect) {
+        } else if (button.textContent === selectedCountry && !isCorrect) {
             button.classList.add("incorrect");
         }
     });
     
-    // Procesar resultado
+    // Procesar respuesta CORRECTA
     if (isCorrect) {
-        // Respuesta correcta
+        console.log("Respuesta CORRECTA procesándose...");
+        
+        // Calcular puntos UNA VEZ
+        let points = 10;
+        if (currentGame.difficulty === "medium") points = 15;
+        if (currentGame.difficulty === "hard") points = 20;
+        
+        // Actualizar estado UNA VEZ
+        currentGame.score += points;
         currentGame.correctAnswers++;
         
-        // Calcular puntuación según dificultad
-        let points = 0;
-        switch (currentGame.difficulty) {
-            case "easy": points = 10; break;
-            case "medium": points = 20; break;
-            case "hard": points = 30; break;
-        }
-        
-        currentGame.score += points;
+        console.log(`Puntos añadidos: ${points}, Puntuación total: ${currentGame.score}`);
         
         // Mostrar feedback
         feedbackElement.textContent = `¡Correcto! +${points} puntos`;
-        feedbackElement.classList.add("correct");
+        feedbackElement.className = "feedback correct";
         
-        // Actualizar UI
+        // Actualizar UI INMEDIATAMENTE
         scoreElement.textContent = currentGame.score;
         
-        // Avanzar a la siguiente ronda después de un breve retraso
-        setTimeout(() => {
-            currentGame.round++;
+        // Programar siguiente ronda con timeout CONTROLADO
+        const timeoutId = setTimeout(() => {
+            console.log(`Pasando de ronda ${currentGame.round} a ${currentGame.round + 1}`);
+            
+            // Incrementar ronda SOLO UNA VEZ
+            currentGame.round += 1;
             roundElement.textContent = currentGame.round;
+            
+            // Preparar para siguiente pregunta
+            window.answerBeingProcessed = false;
+            optionButtons.forEach(btn => {
+                btn.disabled = false;
+                btn.style.pointerEvents = 'auto';
+                btn.classList.remove("correct", "incorrect");
+            });
+            
             generateQuestion();
         }, 1500);
+        
+        activeTimeouts.push(timeoutId);
+        
     } else {
-        // Respuesta incorrecta
-        currentGame.lives--;
-        livesElement.textContent = currentGame.lives;
+        // Procesar respuesta INCORRECTA
+        console.log("Respuesta INCORRECTA procesándose...");
+        
+        // Restar UNA VIDA SOLO UNA VEZ
+        currentGame.lives -= 1;
+        
+        // Limitar a 0 mínimo
+        if (currentGame.lives < 0) currentGame.lives = 0;
+        
+        console.log(`Vidas restantes: ${currentGame.lives}`);
         
         // Mostrar feedback
-        feedbackElement.textContent = `Incorrecto. La respuesta correcta era ${currentGame.currentCountry.name}`;
-        feedbackElement.classList.add("incorrect");
+        feedbackElement.textContent = `Incorrecto. Era ${currentGame.currentCountry.name}`;
+        feedbackElement.className = "feedback incorrect";
         
-        // Verificar si el juego ha terminado
+        // Actualizar UI INMEDIATAMENTE
+        livesElement.textContent = currentGame.lives;
+        
         if (currentGame.lives <= 0) {
-            // Juego terminado
-            setTimeout(() => {
+            // Fin del juego
+            const timeoutId = setTimeout(() => {
+                currentGame.gameActive = false;
+                window.answerBeingProcessed = false;
                 endGame();
             }, 2000);
+            
+            activeTimeouts.push(timeoutId);
+            
         } else {
-            // Continuar con siguiente ronda
-            setTimeout(() => {
-                currentGame.round++;
+            // Continuar jugando
+            const timeoutId = setTimeout(() => {
+                console.log(`Continuando de ronda ${currentGame.round} a ${currentGame.round + 1}`);
+                
+                // Incrementar ronda SOLO UNA VEZ
+                currentGame.round += 1;
                 roundElement.textContent = currentGame.round;
+                
+                // Preparar para siguiente pregunta
+                window.answerBeingProcessed = false;
+                optionButtons.forEach(btn => {
+                    btn.disabled = false;
+                    btn.style.pointerEvents = 'auto';
+                    btn.classList.remove("correct", "incorrect");
+                });
+                
                 generateQuestion();
             }, 2000);
+            
+            activeTimeouts.push(timeoutId);
         }
     }
 }
@@ -444,6 +503,8 @@ function restartGame() {
     scoreElement.textContent = currentGame.score;
     roundElement.textContent = currentGame.round;
     livesElement.textContent = currentGame.lives;
+
+    console.log(`Reiniciando juego - Ronda: ${currentGame.round}, Vidas: ${currentGame.lives}`);
     
     // Cambiar a pantalla de juego
     menuScreen.classList.remove("active");
