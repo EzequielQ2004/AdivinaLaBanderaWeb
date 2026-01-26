@@ -70,8 +70,10 @@ let currentGame = {
     currentCountry: null,
     options: [],
     gameActive: false,
-    usedCountries: [] // Para evitar repeticiones
+    usedCountries: []
 };
+
+let usedCountriesInSession = [];
 
 // Elementos del DOM
 const menuScreen = document.getElementById("menu-screen");
@@ -104,6 +106,10 @@ function initGame() {
     endGameBtn.addEventListener("click", endGame);
     playAgainBtn.addEventListener("click", restartGame);
     backToMenuBtn.addEventListener("click", showMenu);
+
+    console.log("=== INICIALIZACIÓN DEL JUEGO ===");
+    console.log(`Total de países en la base de datos: ${countries.length}`);
+    console.log("Primeros 5 países:", countries.slice(0, 5).map(c => c.name));
     
     // Configurar botones de dificultad
     difficultyButtons.forEach(button => {
@@ -165,7 +171,9 @@ function startGame() {
     currentGame.lives = 3;
     currentGame.correctAnswers = 0;
     currentGame.gameActive = true;
-    currentGame.usedCountries = [];
+    
+    // LIMPIAR la lista de países usados
+    usedCountriesInSession = [];
     
     // Actualizar UI
     scoreElement.textContent = currentGame.score;
@@ -184,69 +192,131 @@ function startGame() {
 
 // Generar una nueva pregunta
 function generateQuestion() {
-    // Limpiar feedback
-    feedbackElement.textContent = "";
-    feedbackElement.className = "feedback";
-    
-    // Mostrar mensaje de carga
-    flagImage.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Cargando bandera...</div>';
-    
-    // Seleccionar un país aleatorio que no se haya usado recientemente
+    // 1. Filtrar países que NO se han usado en esta sesión
     let availableCountries = countries.filter(country => 
-        !currentGame.usedCountries.includes(country.code)
+        !usedCountriesInSession.includes(country.name)
     );
     
-    // Si ya usamos muchas banderas, reiniciamos la lista
-    if (availableCountries.length < 4) {
-        currentGame.usedCountries = [];
+    // 2. Si ya usamos muchos países, reiniciar la lista
+    if (availableCountries.length < 10) {
+        console.log("Reiniciando lista de países usados...");
+        usedCountriesInSession = [];
         availableCountries = countries;
     }
     
+    // 3. Seleccionar un país aleatorio de los disponibles
     const correctIndex = Math.floor(Math.random() * availableCountries.length);
     currentGame.currentCountry = availableCountries[correctIndex];
     
-    // Agregar a la lista de usados
-    currentGame.usedCountries.push(currentGame.currentCountry.code);
+    console.log(`País correcto: ${currentGame.currentCountry.name}`);
+    console.log(`Países ya usados: ${usedCountriesInSession.length}`);
     
-    // Crear imagen de la bandera
+    // 4. Añadir este país a la lista de usados
+    usedCountriesInSession.push(currentGame.currentCountry.name);
+    
+    // 5. Cargar la bandera
+    flagImage.innerHTML = '';
     const img = new Image();
     img.src = currentGame.currentCountry.flag;
     img.alt = `Bandera de ${currentGame.currentCountry.name}`;
     img.classList.add("flag-img");
+    flagImage.appendChild(img);
     
-    img.onload = function() {
-        flagImage.innerHTML = '';
-        flagImage.appendChild(img);
-    };
+    // 6. Crear 4 opciones (SIEMPRE incluyendo la correcta)
+    currentGame.options = [currentGame.currentCountry.name]; // La correcta primero
     
-    img.onerror = function() {
-        // Si falla la carga, mostrar un emoji como fallback
-        flagImage.innerHTML = `<div class="flag-emoji">${getFlagEmoji(currentGame.currentCountry.code)}</div>`;
-    };
+    // 7. Añadir 3 opciones incorrectas DIFERENTES
+    // Primero, buscar opciones incorrectas que NO sean el país correcto
+    let attempts = 0;
+    const maxAttempts = 50; // Para evitar bucle infinito
     
-    // Crear opciones (1 correcta y 3 incorrectas)
-    currentGame.options = [currentGame.currentCountry.name];
-    
-    // Añadir opciones incorrectas (evitar duplicados)
-    while (currentGame.options.length < 4) {
+    while (currentGame.options.length < 4 && attempts < maxAttempts) {
         const randomIndex = Math.floor(Math.random() * countries.length);
         const randomCountry = countries[randomIndex].name;
         
-        if (!currentGame.options.includes(randomCountry)) {
+        // Verificar: no sea el correcto y no esté ya en las opciones
+        if (randomCountry !== currentGame.currentCountry.name && 
+            !currentGame.options.includes(randomCountry)) {
             currentGame.options.push(randomCountry);
+        }
+        attempts++;
+    }
+    
+    // 8. Si no conseguimos suficientes opciones, usar estas de respaldo
+    if (currentGame.options.length < 4) {
+        const backupOptions = ["Francia", "Alemania", "Italia", "Japón", 
+                              "Canadá", "Australia", "Brasil", "China"];
+        
+        for (let option of backupOptions) {
+            if (currentGame.options.length >= 4) break;
+            
+            if (option !== currentGame.currentCountry.name && 
+                !currentGame.options.includes(option)) {
+                currentGame.options.push(option);
+            }
         }
     }
     
-    // Mezclar las opciones para que la correcta no siempre esté en la misma posición
+    // 9. Mezclar las opciones
     shuffleArray(currentGame.options);
     
-    // Actualizar los botones con las opciones
-    optionButtons.forEach((button, index) => {
-        button.textContent = currentGame.options[index];
-        button.classList.remove("correct", "incorrect");
-        button.disabled = false;
+    // 10. VERIFICACIÓN FINAL
+    if (!currentGame.options.includes(currentGame.currentCountry.name)) {
+        console.error("ERROR: La opción correcta se perdió. Corrigiendo...");
+        const randomPos = Math.floor(Math.random() * 4);
+        currentGame.options[randomPos] = currentGame.currentCountry.name;
+    }
+    
+    // 11. Mostrar en los botones
+    optionButtons.forEach((btn, i) => {
+        if (i < currentGame.options.length) {
+            btn.textContent = currentGame.options[i];
+            btn.classList.remove("correct", "incorrect");
+            btn.disabled = false;
+        }
     });
+    
+    console.log(`Opciones: ${currentGame.options.join(", ")}`);
+    console.log(`Posición correcta: ${currentGame.options.indexOf(currentGame.currentCountry.name)}`);
 }
+
+// Función para verificar el estado actual del juego
+function verifyCurrentGameState() {
+    console.log("=== VERIFICACIÓN DEL ESTADO ACTUAL ===");
+    
+    if (!currentGame.currentCountry) {
+        console.error("❌ ERROR: currentGame.currentCountry es undefined o null");
+        return false;
+    }
+    
+    if (!currentGame.options || currentGame.options.length !== 4) {
+        console.error(`❌ ERROR: currentGame.options tiene ${currentGame.options ? currentGame.options.length : 0} elementos (debería tener 4)`);
+        return false;
+    }
+    
+    const hasCorrectOption = currentGame.options.includes(currentGame.currentCountry.name);
+    
+    if (!hasCorrectOption) {
+        console.error(`❌ ERROR CRÍTICO: El país "${currentGame.currentCountry.name}" NO está en las opciones`);
+        console.log("Opciones disponibles:", currentGame.options);
+        
+        // Mostrar en pantalla para debug
+        if (feedbackElement) {
+            feedbackElement.textContent = `ERROR: "${currentGame.currentCountry.name}" no está en las opciones`;
+            feedbackElement.classList.add("incorrect");
+        }
+        
+        return false;
+    }
+    
+    console.log(`✓ País correcto: ${currentGame.currentCountry.name}`);
+    console.log(`✓ Opciones: ${currentGame.options.join(", ")}`);
+    console.log(`✓ La opción correcta está en posición: ${currentGame.options.indexOf(currentGame.currentCountry.name)}`);
+    
+    return true;
+}
+
+setTimeout(verifyCurrentGameState, 100);
 
 // Función para obtener emoji de bandera como fallback
 function getFlagEmoji(countryCode) {
@@ -366,7 +436,9 @@ function restartGame() {
     currentGame.lives = 3;
     currentGame.correctAnswers = 0;
     currentGame.gameActive = true;
-    currentGame.usedCountries = [];
+    
+    // LIMPIAR la lista de países usados
+    usedCountriesInSession = [];
     
     // Actualizar UI
     scoreElement.textContent = currentGame.score;
@@ -383,7 +455,7 @@ function restartGame() {
     generateQuestion();
 }
 
-// Botones de compartir en redes sociales (funcionalidad básica)
+// Botones de compartir en redes sociales
 document.querySelectorAll(".social-btn").forEach(button => {
     button.addEventListener("click", function() {
         const platform = this.querySelector("i").className;
@@ -440,5 +512,3 @@ document.addEventListener('DOMContentLoaded', function() {
     // También optimizar al cambiar tamaño de ventana
     window.addEventListener('resize', optimizeForTouch);
 });
-
-// Añadir esta clase CSS para deshabilitar hover en móviles
